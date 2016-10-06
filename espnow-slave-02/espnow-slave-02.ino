@@ -60,15 +60,22 @@ void setup() {
   esp_now_register_recv_cb([](uint8_t *macaddr, uint8_t *data, uint8_t len) {
     counter++;
 
-    if (data[0] == 1)  {
-      digitalWrite(LED_BUILTIN, LOW);
-      digitalWrite(RELAY, !digitalRead(RELAY));
-    } else {
-      digitalWrite(LED_BUILTIN, HIGH);
-    }
+        if (data[0] == 0)  { // for esp slave number 02
+          digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+          digitalWrite(RELAY, !digitalRead(RELAY));
+        }
+//    if (data[0] == 2)  { // for esp slave number 03
+//      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+//      digitalWrite(RELAY, !digitalRead(RELAY));
+//    }
+    //    if (data[0] == 4)  { // for esp slave number 04
+    //      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+    //      digitalWrite(RELAY, !digitalRead(RELAY));
+    //    }
 
     //    digitalWrite(LED_BUILTIN, !data[0]);
     Serial.println(data[0]);
+    delay(500);
   });
 
   esp_now_register_send_cb([](uint8_t* macaddr, uint8_t status) {

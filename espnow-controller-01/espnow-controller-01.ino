@@ -6,6 +6,17 @@ extern "C" {
 }
 
 #define WIFI_DEFAULT_CHANNEL 9
+// define pin for espresso lite
+#define buttun0 0
+#define buttun13 13
+
+// define pin for dwminiESP remote
+//#define buttun12 12
+//#define buttun13 13
+//#define buttun14 14
+//#define led1 15
+//#define led2 0
+//#define led3 2
 
 // neo = {0x1A,0xFE,0x34,0xEE,0xCA,0xED}
 //uint8_t neo_slave[] = {0x1A,0xFE,0x34,0xEE,0xCA,0xED};
@@ -37,7 +48,15 @@ void setup() {
   WiFi.disconnect();
 
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(0, INPUT_PULLUP);
+  pinMode(buttun0, INPUT);
+  pinMode(buttun13, INPUT);
+
+  //  pinMode(led1, OUTPUT);
+  //  pinMode(led2, OUTPUT);
+  //  pinMode(led3, OUTPUT);
+  //  pinMode(buttun12, INPUT);
+  //  pinMode(buttun13, INPUT);
+  //  pinMode(buttun14, INPUT);
 
   Serial.begin(115200);
   Serial.println("Initializing...");
@@ -76,19 +95,19 @@ void setup() {
   });
 
   esp_now_register_send_cb([](uint8_t* macaddr, uint8_t status) {
-    Serial.print("send_cb");
+    //    Serial.print("send_cb");
 
-    Serial.print("mac address: ");
-    printMacAddress(macaddr);
+    //    Serial.print("mac address: ");
+    //    printMacAddress(macaddr);
 
-    Serial.print(" status = "); Serial.println(status);
+    //    Serial.print(" status = "); Serial.println(status);
   });
 
   //  int res = esp_now_add_peer(no1, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res2 = esp_now_add_peer(no2, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res3 = esp_now_add_peer(no3, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
   int res4 = esp_now_add_peer(no4, (uint8_t)ESP_NOW_ROLE_SLAVE, (uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
-  
+
   //  int res2 = esp_now_add_peer(no[1], (uint8_t)ESP_NOW_ROLE_SLAVE,(uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
 
   //  res = esp_now_add_peer(bare_up_slave, (uint8_t)ESP_NOW_ROLE_SLAVE,(uint8_t)WIFI_DEFAULT_CHANNEL, NULL, 0);
@@ -101,23 +120,36 @@ void setup() {
 }
 
 bool _status = true;
-uint8_t message[] = { 0x00, 0x01 };
+uint8_t message[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
 int number;
 
 void loop() {
-  if (digitalRead(0) == 0)  {
+  if (digitalRead(buttun0) == 0)  {
     delay(200);
-    //    message = 1;
+    //message = 1;
     esp_now_send(NULL, &message[0], 1);
-    //    esp_now_send(NULL, message[0], 1);
-    Serial.println("Button press");
+    //digitalWrite(led1, !digitalRead(led1));
+    //Serial.println("Button press");
   } else {
-    //    delay(200);
-    //    message = 0;
+    //delay(200);
+    //message = 0;
     esp_now_send(NULL, &message[1], 1);
-    //    esp_now_send(NULL, message[0], 1);
-    //    Serial.println("Button not press");
+    //Serial.println("Button not press");
   }
+  if (digitalRead(buttun13) == 0)  {
+    delay(200);
+    esp_now_send(NULL, &message[2], 1);
+    //digitalWrite(led2, !digitalRead(led2));
+  } else {
+    esp_now_send(NULL, &message[3], 1);
+  }
+  //  if (digitalRead(buttun14) == 1)  {
+  //    delay(100);
+  //    esp_now_send(NULL, &message[4], 1);
+  //    digitalWrite(led3, !digitalRead(led3));
+  //  } else {
+  //    esp_now_send(NULL, &message[5], 1);
+  //  }
 
   // esp_now_send(neo_slave, message, sizeof(message));
   // esp_now_send(bare_up_slave, message, sizeof(message));
