@@ -140,10 +140,12 @@ void loop() {
       Serial.println("Toggle ON");
       esp_now_send(NULL, &message[0], 1);
       esp_now_send(NULL, &message[2], 1);
+      esp_now_send(NULL, &message[4], 1);
     } else if (count == false)  {
       Serial.println("Toggle OFF");
       esp_now_send(NULL, &message[1], 1);
       esp_now_send(NULL, &message[3], 1);
+      esp_now_send(NULL, &message[5], 1);
     }
     digitalWrite(led1, !digitalRead(led1));
     digitalWrite(led2, !digitalRead(led2));
@@ -163,17 +165,21 @@ void loop() {
     delay(200);
     esp_now_send(NULL, &message[0], 1);
     esp_now_send(NULL, &message[2], 1);
+    esp_now_send(NULL, &message[4], 1);
     digitalWrite(led1, HIGH);
     digitalWrite(led2, LOW);
     digitalWrite(led3, LOW);
+    count = true;
   }
   if (digitalRead(buttun14) == 1)  {
     delay(200);
     esp_now_send(NULL, &message[1], 1);
     esp_now_send(NULL, &message[3], 1);
+    esp_now_send(NULL, &message[5], 1);
     digitalWrite(led1, LOW);
     digitalWrite(led2, HIGH);
     digitalWrite(led3, HIGH);
+    count = false;
   }
 
   // esp_now_send(neo_slave, message, sizeof(message));

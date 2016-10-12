@@ -62,23 +62,30 @@ void setup() {
   esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
   esp_now_register_recv_cb([](uint8_t *macaddr, uint8_t *data, uint8_t len) {
     counter++;
-    
-    /*** esp now 03 ***/
-    if (data[0] == 0)  { // for esp slave number 03
+    /*** esp now 02 ***/
+    if (data[0] == 4)  { // for esp slave number 02
       digitalWrite(LED_BUILTIN, LOW);
       digitalWrite(RELAY, HIGH);
-    } else if (data[0] == 1) {
+    } else if (data[0] == 5) {
       digitalWrite(LED_BUILTIN, HIGH);
       digitalWrite(RELAY, LOW);
     }
+    /*** esp now 03 ***/
+    //    if (data[0] == 0)  { // for esp slave number 03
+    //      digitalWrite(LED_BUILTIN, LOW);
+    //      digitalWrite(RELAY, HIGH);
+    //    } else if (data[0] == 1) {
+    //      digitalWrite(LED_BUILTIN, HIGH);
+    //      digitalWrite(RELAY, LOW);
+    //    }
     /*** esp now 04 ***/
-//    if (data[0] == 2)  { // for esp slave number 04
-//      digitalWrite(LED_BUILTIN, LOW);
-//      digitalWrite(RELAY, HIGH);
-//    } else if (data[0] == 3) {
-//      digitalWrite(LED_BUILTIN, HIGH);
-//      digitalWrite(RELAY, LOW);
-//    }
+    //    if (data[0] == 2)  { // for esp slave number 04
+    //      digitalWrite(LED_BUILTIN, LOW);
+    //      digitalWrite(RELAY, HIGH);
+    //    } else if (data[0] == 3) {
+    //      digitalWrite(LED_BUILTIN, HIGH);
+    //      digitalWrite(RELAY, LOW);
+    //    }
     /*** Toggle ***/
     //    if (data[0] == 2)  { // for esp slave number 03
     //      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
