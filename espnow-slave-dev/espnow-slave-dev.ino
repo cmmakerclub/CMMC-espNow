@@ -5,25 +5,11 @@ extern "C" {
 #include <user_interface.h>
 }
 
-#define WIFI_DEFAULT_CHANNEL 9
+#define WIFI_DEFAULT_CHANNEL 50
 #define RELAY 15
 
-/* 0b00000001 esp 04
-   0b00000010 esp 03
-   0b00000100 esp 02
-*/
-#define CMMC_DEVICE_ID   1
-#define CMMC_DEVICE_MASK 0b00000010
-
-// esp number 1 master
-// esp number 2 {0x1A, 0xFE, 0x34, 0xDA, 0xF1, 0xB8};
-
-// {0x18,0xFE,0x34,0xEE,0xCA,0xED} = bare
-//uint8_t mac[] = {0x5C, 0xCF, 0x7F, 0x9, 0xCC, 0x35};
-
-uint8_t mac[] = {0x1A, 0xFE, 0x34, 0xDA, 0xF0, 0x99};
-
-//uint8_t mac[] = {0x18, 0xFE, 0x34, 0xEE, 0xEC, 0xA7};
+// esp master
+uint8_t mac[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; //{0x1A, 0xFE, 0x34, 0xDA, 0xF0, 0x99};
 uint16_t counter = 0;
 
 #include <Ticker.h>
@@ -69,37 +55,23 @@ void setup() {
   Serial.println("SET ROLE SLAVE");
   esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
   esp_now_register_recv_cb([](uint8_t *macaddr, uint8_t *data, uint8_t len) {
-    Serial.print(data[0], BIN);
-    Serial.println(" ");
-
-    Serial.println( data[0] & CMMC_DEVICE_MASK );
-    if (data[0] & CMMC_DEVICE_MASK == 1)  {
+    counter++;
+    /*** esp now 02 ***/
+    if (data[0] == 4)  { // for esp slave number 02
       digitalWrite(LED_BUILTIN, LOW);
       digitalWrite(RELAY, HIGH);
-    } else {
+    } else if (data[0] == 5) {
       digitalWrite(LED_BUILTIN, HIGH);
       digitalWrite(RELAY, LOW);
     }
-
-    //      digitalWrite(LED_BUILTIN, !(data[0] & CMMC_DEVICE_MASK));
-    //      digitalWrite(RELAY, data[0] & CMMC_DEVICE_MASK);
-
-    /*** esp now 02 ***/
-    //    if (data[0] == 4)  { // for esp slave number 02
+    /*** esp now 03 ***/
+    //    if (data[0] == 0)  { // for esp slave number 03
     //      digitalWrite(LED_BUILTIN, LOW);
     //      digitalWrite(RELAY, HIGH);
-    //    } else if (data[0] == 5) {
+    //    } else if (data[0] == 1) {
     //      digitalWrite(LED_BUILTIN, HIGH);
     //      digitalWrite(RELAY, LOW);
     //    }
-    /*** esp now 03 ***/
-    if (data[0] == 0)  { // for esp slave number 03
-      digitalWrite(LED_BUILTIN, LOW);
-      digitalWrite(RELAY, HIGH);
-    } else if (data[0] == 1) {
-      digitalWrite(LED_BUILTIN, HIGH);
-      digitalWrite(RELAY, LOW);
-    }
     /*** esp now 04 ***/
     //    if (data[0] == 2)  { // for esp slave number 04
     //      digitalWrite(LED_BUILTIN, LOW);
