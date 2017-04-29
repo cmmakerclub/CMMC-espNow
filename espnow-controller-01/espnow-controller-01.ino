@@ -101,7 +101,7 @@ void setup() {
       Serial.print(data[i], HEX);
     }
     Serial.print("  ");
-  });
+  }); +
 
   esp_now_register_send_cb([](uint8_t* macaddr, uint8_t status) {
     //    Serial.print("send_cb");
@@ -129,7 +129,7 @@ void setup() {
 }
 
 bool _status = true;
-uint8_t message[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05};
+uint8_t message[] = { 0x00, 0xFF};
 int number;
 
 void loop() {
@@ -138,21 +138,16 @@ void loop() {
     delay(200);
     if (count == true)  {
       Serial.println("Toggle ON");
-      esp_now_send(NULL, &message[0], 1);
-      esp_now_send(NULL, &message[2], 1);
-      esp_now_send(NULL, &message[4], 1);
+      esp_now_send(NULL, &message[1], 1);
     } else if (count == false)  {
       Serial.println("Toggle OFF");
-      esp_now_send(NULL, &message[1], 1);
-      esp_now_send(NULL, &message[3], 1);
-      esp_now_send(NULL, &message[5], 1);
+      esp_now_send(NULL, &message[0], 1);
     }
     digitalWrite(led1, !digitalRead(led1));
     digitalWrite(led2, !digitalRead(led2));
     digitalWrite(led3, !digitalRead(led3));
     Serial.println("Press");
     state = !state;
-
   }
 
   if (digitalRead(buttun13) == 1)  {
@@ -163,9 +158,7 @@ void loop() {
 
   if (digitalRead(buttun12) == 1)  {
     delay(200);
-    esp_now_send(NULL, &message[0], 1);
-    esp_now_send(NULL, &message[2], 1);
-    esp_now_send(NULL, &message[4], 1);
+    esp_now_send(NULL, &message[1], 1);
     digitalWrite(led1, HIGH);
     digitalWrite(led2, LOW);
     digitalWrite(led3, LOW);
@@ -173,20 +166,11 @@ void loop() {
   }
   if (digitalRead(buttun14) == 1)  {
     delay(200);
-    esp_now_send(NULL, &message[1], 1);
-    esp_now_send(NULL, &message[3], 1);
-    esp_now_send(NULL, &message[5], 1);
+    esp_now_send(NULL, &message[0], 1);
     digitalWrite(led1, LOW);
     digitalWrite(led2, HIGH);
     digitalWrite(led3, HIGH);
     count = false;
   }
-
-  // esp_now_send(neo_slave, message, sizeof(message));
-  // esp_now_send(bare_up_slave, message, sizeof(message));
-  //  message[0] = _status;
-  //    _status = !_status;
-  //  digitalWrite(LED_BUILTIN, _status);
-  //  delay(200);
 }
 

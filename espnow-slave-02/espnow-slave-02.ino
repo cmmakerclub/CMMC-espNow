@@ -8,9 +8,9 @@ extern "C" {
 #define WIFI_DEFAULT_CHANNEL 9
 #define RELAY 15
 
-/* 0b00000001 esp 04
-   0b00000010 esp 03
-   0b00000100 esp 02
+/* 0b00000001 esp 04 
+   0b00000010 esp 03 
+   0b00000100 esp 02 
 */
 #define CMMC_DEVICE_ID   1
 #define CMMC_DEVICE_MASK 0b00000010
@@ -69,20 +69,13 @@ void setup() {
   Serial.println("SET ROLE SLAVE");
   esp_now_set_self_role(ESP_NOW_ROLE_SLAVE);
   esp_now_register_recv_cb([](uint8_t *macaddr, uint8_t *data, uint8_t len) {
+
     Serial.print(data[0], BIN);
-    Serial.println(" ");
-
+    Serial.print(" ");
     Serial.println( data[0] & CMMC_DEVICE_MASK );
-    if (data[0] & CMMC_DEVICE_MASK == 1)  {
-      digitalWrite(LED_BUILTIN, LOW);
-      digitalWrite(RELAY, HIGH);
-    } else {
-      digitalWrite(LED_BUILTIN, HIGH);
-      digitalWrite(RELAY, LOW);
-    }
 
-    //      digitalWrite(LED_BUILTIN, !(data[0] & CMMC_DEVICE_MASK));
-    //      digitalWrite(RELAY, data[0] & CMMC_DEVICE_MASK);
+    digitalWrite(LED_BUILTIN, !(data[0] & CMMC_DEVICE_MASK));
+    digitalWrite(RELAY, data[0] & CMMC_DEVICE_MASK);
 
     /*** esp now 02 ***/
     //    if (data[0] == 4)  { // for esp slave number 02
@@ -93,13 +86,13 @@ void setup() {
     //      digitalWrite(RELAY, LOW);
     //    }
     /*** esp now 03 ***/
-    if (data[0] == 0)  { // for esp slave number 03
-      digitalWrite(LED_BUILTIN, LOW);
-      digitalWrite(RELAY, HIGH);
-    } else if (data[0] == 1) {
-      digitalWrite(LED_BUILTIN, HIGH);
-      digitalWrite(RELAY, LOW);
-    }
+    //    if (data[0] == 0 || (data[0] & CMMC_DEVICE_MASK) == 2)  { // for esp slave number 03
+    //      digitalWrite(LED_BUILTIN, LOW);
+    //      digitalWrite(RELAY, HIGH);
+    //    } else if (data[0] == 1 || (data[0] & CMMC_DEVICE_MASK) == 0) {
+    //      digitalWrite(LED_BUILTIN, HIGH);
+    //      digitalWrite(RELAY, LOW);
+    //    }
     /*** esp now 04 ***/
     //    if (data[0] == 2)  { // for esp slave number 04
     //      digitalWrite(LED_BUILTIN, LOW);
@@ -119,7 +112,7 @@ void setup() {
     //    }
 
     //    digitalWrite(LED_BUILTIN, !data[0]);
-    Serial.println(data[0]);
+    //    Serial.println(data[0]);
     delay(500);
   });
 
